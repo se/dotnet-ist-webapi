@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -98,6 +99,16 @@ namespace src
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.Use(async (context, next) =>
+            {
+                var requestName = context.Request.Path;
+                var sw = new Stopwatch();
+                sw.Start();
+                await next.Invoke();
+                sw.Stop();
+                Console.WriteLine($"{requestName} [{sw.ElapsedMilliseconds:N2}]");
+            });
 
             app.UseStaticFiles();
 
